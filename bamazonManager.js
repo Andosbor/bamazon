@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: "localhost",
   
     // Your port; if not 3306
-    port: 3306,
+    port: 3307,
   
     // Your username
     user: "root",
@@ -35,13 +35,20 @@ function userChoices() {
                 message: "How many would you like to buy?"
             }
         ]).then(function(answer){
-            console.log(answer.productQuantity);
+            console.log(answer.productID);
             var query = "SELECT item_id, stock_quantity FROM products WHERE ?";
-            connection.query(query, { productQuantity: answer.productQuantity }, function(err, res) {
+            connection.query(query, { item_id: answer.productID }, function(err, res) {
+                console.log(res[0]);
+
+                /*
                 for (var i = 0; i < res.length; i++) {
                     console.log("Position: " + res[i].item_id + " || stock_quantity: " + res[i].stock_quantity);
                   }
+                */
+
             })
+        
+        
             //Use productQuantity to check if the user can buy the amount they want
             //if (answer.productQuantity > answer.productID)
                                         //must find a way to use answer.productID to get the stock quantity of that ID in the database******
