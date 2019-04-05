@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: "localhost",
   
     // Your port; if not 3306
-    port: 3307,
+    port: 3306,
   
     // Your username
     user: "root",
@@ -38,20 +38,39 @@ function userChoices() {
             console.log(answer.productID);
             var query = "SELECT item_id, stock_quantity FROM products WHERE ?";
             connection.query(query, { item_id: answer.productID }, function(err, res) {
-                console.log(res[0]);
+                console.log(res[0].stock_quantity);
 
-                /*
-                for (var i = 0; i < res.length; i++) {
-                    console.log("Position: " + res[i].item_id + " || stock_quantity: " + res[i].stock_quantity);
-                  }
-                */
+                if(answer.productQuantity > res[0].stock_quantity){
+                    console.log("We don't have that many in our stock...")
+                }
+
+                else if(answer.productQuantity <= res[0].stock_quantity){
+                    //subtract answer.productQuantity from res[0].stock_quantity and update the answer as the new res[0].stock_quantity in the database
+                    var newQuantity = res[0].stock_quantity - answer.productQuantity;
+                    console.log(newQuantity);
+
+                    console.log("Updating product quantity\n");
+                    var updateQuery = connection.query(
+                        "UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                                stock_quantity: newQuantity
+                            },
+                            {
+                                item_id: answer.productID
+                            }
+                        ],
+                    )
+                    console.log(updateQuery.sql);
+                    connection.end();
+                }
+                    
+                else{
+                    console.log("Please enter a valid id and/or quantity")
+                }
 
             })
-        
-        
-            //Use productQuantity to check if the user can buy the amount they want
-            //if (answer.productQuantity > answer.productID)
-                                        //must find a way to use answer.productID to get the stock quantity of that ID in the database******
+
 
 
 
@@ -59,6 +78,6 @@ function userChoices() {
                 //if the user can buy the amount they want, update the quantity of that product in the server
                                                         // show the user their receipt by using the cost of the item and how much they bought
 
-            connection.end();
-        });
+        
+    });
 }
