@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: "localhost",
   
     // Your port; if not 3306
-    port: 3307,
+    port: 3306,
   
     // Your username
     user: "root",
@@ -18,14 +18,15 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   showTable();
-  userChoices();
 });
 function showTable(){
-    connection.query("SELECT * FROM products", function(err, res) {
+    connection.query("SELECT item_id, product_name, price FROM products", function(err, res) {
         if (err) throw err;
         // Log all results of the SELECT statement
+        console.log("\n------------------------Welcome to Bamazon------------------------")
         console.log(res);
-
+        console.log("------------------------------------------------------------------\n")
+        userChoices();
       });
 }
 
@@ -58,7 +59,7 @@ function userChoices() {
                     //subtract answer.productQuantity from res[0].stock_quantity and update the answer as the new res[0].stock_quantity in the database
                     var newQuantity = res[0].stock_quantity - answer.productQuantity;
 
-                    console.log("\nUpdating product quantity\n");
+                    console.log("\n");
                     connection.query(
                         "UPDATE products SET ? WHERE ?",
                         [
@@ -73,7 +74,7 @@ function userChoices() {
 
                     var receipt = answer.productQuantity * res[0].price;
                             //find price of product using id and multiply it by answer.productQuantity
-                            console.log("your purchase costs $" + receipt);
+                            console.log("Thank you. Your purchase costs $" + receipt);
                     connection.end();
                 }
                     
